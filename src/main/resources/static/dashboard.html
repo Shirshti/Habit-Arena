@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <style>
+
+        body{
+            font-family: 'Segoe UI', Arial;
+            background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #1e293b;
+        }
+
+        /* MAIN BOX */
+        .container{
+           max-width: 500px;
+           margin: auto;
+           background: white;
+           padding: 25px;
+           border-radius: 15px;
+           margin-top: 40px;
+           box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        /* HEADINGS */
+        h1{
+            margin-bottom: 5px;
+        }
+
+        h3{
+            margin-top: 25px;
+        }
+
+        /* INPUT SMALLER */
+        input{
+            padding: 10px;
+            width: 50%; /* 🔥 reduced */
+            margin: 8px auto;
+            display: block;
+            border-radius: 6px;
+            border: 1px solid #cbd5f5;
+        }
+
+        /* BUTTONS */
+        button{
+            padding: 8px 16px;
+            margin: 8px;
+            background: linear-gradient(45deg, #0ea5e9, #0020d8);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover{
+            transform: translateY(-1px);
+        }
+
+        /* HABIT LIST */
+        li{
+            background: #0f172a;
+            color: white;
+            margin: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        /* 🔥 LEADERBOARD DIFFERENT LOOK */
+        #leaderboard li{
+            background: #e0f2fe;  /* light blue */
+            color: #0f172a;
+            font-weight: bold;
+            border-left: 5px solid #0ea5e9;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>Dashboard</h1>
+<p id = "status"></p>
+
+<h3>Add Habit</h3>
+<input id="habitName" placeholder="Enter habit">
+<button onclick="addHabit()">Add Habit</button>
+
+<h3>Your Habits</h3>
+<ul id="habitList"></ul>
+<button onclick="loadHabits()">Load Habits</button>
+
+<button onclick="loadLeaderboard()">Show Leaderboard</button>
+<ul id="leaderboard"></ul>
+
+
+<script>
+
+    let token = localStorage.getItem("token");
+
+    let statusEl = document.getElementById("status");
+
+    if (token) {
+        statusEl.innerText = "Logged in ✅";
+    } else {
+        statusEl.innerText = "Not logged in ❌";
+    }
+
+    async function addHabit() {
+    console.log("TOKEN:", localStorage.getItem("token"));
+        let token = localStorage.getItem("token");
+        let name = document.getElementById("habitName").value;
+
+        let res = await fetch("https://habit-arena-fwxv.onrender.com/Habit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({ title: name })
+        });
+
+        if(res.ok){
+            alert("Habit added! ✅");
+            loadHabits();
+        } else {
+            alert("Error adding habit ❌");
+        }
+    }
+
+    async function loadHabits() {
+        let token = localStorage.getItem("token");
+
+        let res = await fetch("https://habit-arena-fwxv.onrender.com/Habit", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        let data = await res.json();
+
+        let list = document.getElementById("habitList");
+        list.innerHTML = "";
+
+        data.forEach(habit => {
+            let li = document.createElement("li");
+
+            li.innerHTML = `
+                ${habit.title}
+                <button onclick="markDone(${habit.id})">✅ Done</button>
+                <span id="status-${habit.id}"></span>
+                <span id="streak-${habit.id}"> 🔥 0</span>
+            `;
+
+            list.appendChild(li);
+
+            loadStreak(habit.id);
+        });
+    }
+
+    async function markDone(habitId) {
+        let token = localStorage.getItem("token");
+
+        let res = await fetch(`https://habit-arena-fwxv.onrender.com/Habit/complete/${habitId}`, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if(res.ok){
+            alert("Marked Done! 🔥");
+            document.getElementById(`status-${habitId}`).innerText = " ✔ Done today";
+        } else {
+            alert("Error marking habit ❌");
+        }
+    }
+
+    async function loadStreak(habitId) {
+        let token = localStorage.getItem("token");
+
+        let res = await fetch(`"https://habit-arena-fwxv.onrender.com/Habit/streak/${habitId}`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        let streak = await res.text();
+
+        let el = document.getElementById(`streak-${habitId}`);
+        if(el){
+            el.innerText = ` 🔥 ${streak}`;
+        }
+    }
+
+    async function loadLeaderboard() {
+        let token = localStorage.getItem("token");
+
+        console.log("TOKEN:" ,  token);
+
+        let res = await fetch("http://localhost:8080/leaderboard", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        console.log("STATUE:" , res.status);
+
+        let data = await res.json();
+
+        console.log("DATA:", data);
+
+        let list = document.getElementById("leaderboard");
+        list.innerHTML = "";
+
+        data.forEach((user, index) => {
+            let li = document.createElement("li");
+            li.innerHTML = `#${index+1} ${user.username} 🔥 ${user.streak}`;
+            list.appendChild(li);
+        });
+    }
+
+</script>
+
+</body>
+</html>

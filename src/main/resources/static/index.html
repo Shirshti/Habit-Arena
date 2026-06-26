@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Habit Arena</title>
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <title>Habit Arena</title>
+
+        <style>
+            body{
+                font-family: 'Segoe UI', Arial;
+                background: linear-gradient(135deg, #e0f2fe, #f8fafc); /* light blue → white */
+                margin: 0;
+                padding: 0;
+                text-align: center;
+                color: #1e293b;
+            }
+
+            .container{
+               max-width: 500px;
+               margin: auto;
+               background: white;
+               padding: 30px;
+               border-radius: 15px;
+               margin-top: 50px;
+               box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            }
+
+            h1{
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+
+            .logoA{
+               display: inline-block;
+               vertical-align: middle;
+               font-size: 45px;
+               font-weight: bold;
+               background: linear-gradient(45deg, #0ea5e9, #0020d8); /* 🔥 trending blue */
+               -webkit-background-clip: text;
+               -webkit-text-fill-color: transparent;
+               transition: 0.3s;
+            }
+
+            .logoA:hover{
+                transform: scale(1.2);
+            }
+
+            .subtitle{
+                font-size: 14px;
+                color: #64748b;
+                margin-bottom: 20px;
+            }
+
+            input{
+                padding: 10px;
+                width: 60%;
+                margin: 10px auto;
+                display: block;
+                border-radius: 6px;
+                border: 1px solid #cbd5f5;
+                background: #f8fafc;
+            }
+
+            input:focus{
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 5px rgba(59,130,246,0.4);
+            }
+
+            button{
+                padding: 10px 20px;
+                margin: 10px;
+                background: linear-gradient(45deg, #0ea5e9, #0020d8);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            button:hover{
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(59,130,246,0.3);
+            }
+
+            ul{
+                list-style: none;
+                padding: 0;
+            }
+
+            li{
+                background: #0f172a;
+                color: white;
+                margin: 10px;
+                padding: 12px;
+                border-radius: 10px;
+                font-size: 16px;
+                border-left: 5px solid #0ea5e9;
+                transition: 0.2s;
+            }
+
+            li:hover{
+                transform: scale(1.02);
+                background: #dbeafe;
+            }
+        </style>
+
+
+    </head>
+
+    <body>
+
+
+    <div class="container">
+
+
+        <h1>
+            Habit<span class="logoA">A</span>rena
+        </h1>
+
+        <p class="subtitle">Track your habits. Build consistency.</p>
+
+        <h3>Register</h3>
+        <input id="regUser" placeholder="username">
+        <input id="regPass" placeholder="password">
+        <button onclick="register()">Register</button>
+
+        <h3>Login</h3>
+        <input id="loginUser" placeholder="username">
+        <input id="loginPass" placeholder="password">
+        <button onclick="login()">Login</button>
+
+        <br>
+
+        <button onclick="loadLeaderboard()">Show Leaderboard</button>
+
+        <h3>Leaderboard</h3>
+        <ul id="leaderboard"></ul>
+
+
+    </div>
+
+    <script>
+        let token = "";
+
+        async function register() {
+            let username = document.getElementById("regUser").value;
+            let password = document.getElementById("regPass").value;
+
+            await fetch("https://habit-arena-fwxv.onrender.com/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({username, password})
+            });
+
+            alert("Registered successfully!");
+        }
+
+        async function login() {
+            let username = document.getElementById("loginUser").value;
+            let password = document.getElementById("loginPass").value;
+
+            let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({username, password})
+            });
+
+            token = await res.text();
+            localStorage.setItem("token", token);
+            window.location.href = "./dashboard.html";
+
+            console.log(token);
+            alert("Login successful!");
+        }
+
+        async function loadLeaderboard() {
+            let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/leaderboard", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            let data = await res.json();
+
+            let list = document.getElementById("leaderboard");
+            list.innerHTML = "";
+
+            data.forEach((user, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `#${index+1} <strong>${user.username}</strong> 🔥 ${user.streak}`;
+                list.appendChild(li);
+            });
+        }
+    </script>
+
+    </body>
+    </html>

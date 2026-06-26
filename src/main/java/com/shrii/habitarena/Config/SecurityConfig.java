@@ -24,7 +24,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf ->csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll() //doesn't need token
+                .requestMatchers(
+                        "/",
+                        "/index.html",
+                        "/dashboard.html",
+                        "/auth/**").permitAll() //doesn't need token
                 .anyRequest().authenticated() //everthing else require login
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); //run filter before
