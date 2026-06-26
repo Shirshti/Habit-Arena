@@ -133,34 +133,39 @@
     }
 
     async function loadHabits() {
-        let token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
 
-        let res = await fetch("https://habit-arena-fwxv.onrender.com/Habit", {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
+    let res = await fetch("https://habit-arena-fwxv.onrender.com/Habit", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
 
-        let data = await res.json();
-
-        let list = document.getElementById("habitList");
-        list.innerHTML = "";
-
-        data.forEach(habit => {
-            let li = document.createElement("li");
-
-            li.innerHTML = `
-                ${habit.title}
-                <button onclick="markDone(${habit.id})">✅ Done</button>
-                <span id="status-${habit.id}"></span>
-                <span id="streak-${habit.id}"> 🔥 0</span>
-            `;
-
-            list.appendChild(li);
-
-            loadStreak(habit.id);
-        });
+    if (!res.ok) {
+        alert("Failed to load habits. Status: " + res.status);
+        return;
     }
+
+    let data = await res.json();
+
+    let list = document.getElementById("habitList");
+    list.innerHTML = "";
+
+    data.forEach(habit => {
+        let li = document.createElement("li");
+
+        li.innerHTML = `
+            ${habit.title}
+            <button onclick="markDone(${habit.id})">✅ Done</button>
+            <span id="status-${habit.id}"></span>
+            <span id="streak-${habit.id}"> 🔥 0</span>
+        `;
+
+        list.appendChild(li);
+
+        loadStreak(habit.id);
+    });
+}
 
     async function markDone(habitId) {
         let token = localStorage.getItem("token");
@@ -183,7 +188,7 @@
     async function loadStreak(habitId) {
         let token = localStorage.getItem("token");
 
-        let res = await fetch(`"https://habit-arena-fwxv.onrender.com/Habit/streak/${habitId}`, {
+        let res = await fetch(`https://habit-arena-fwxv.onrender.com/Habit/streak/${habitId}`, {
             headers: {
                 "Authorization": "Bearer " + token
             }
@@ -202,7 +207,7 @@
 
         console.log("TOKEN:" ,  token);
 
-        let res = await fetch("http://localhost:8080/leaderboard", {
+        let res = await fetch("https://habit-arena-fwxv.onrender.com/leaderboard", {
             headers: {
                 "Authorization": "Bearer " + token
             }
