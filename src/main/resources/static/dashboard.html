@@ -170,7 +170,7 @@
     async function markDone(habitId) {
         let token = localStorage.getItem("token");
 
-        let res = await fetch(`https://habit-arena-fwxv.onrender.com/Habit/complete/${habitId}`, {
+        let res = await fetch(`https://habit-arena-fwxv.onrender.com/Habit/${habitId}/complete`, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token
