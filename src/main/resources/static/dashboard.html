@@ -15,15 +15,50 @@
             color: #1e293b;
         }
 
+        .navbar{
+
+             display:flex;
+             justify-content:space-between;
+             align-items:center;
+             padding:20px 30px;
+             background:white;
+             box-shadow:0 2px 10px rgba(0,0,0,0.08);
+             border-radius:12px;
+             margin-bottom:25px;
+        }
+        .logo{
+           font-size:28px;
+           font-weight:bold;
+           color:#2563eb;
+        }
+        .navRight{
+            display:flex;
+            align-items:center;
+             gap:15px;
+        }
+
         /* MAIN BOX */
         .container{
-           max-width: 500px;
+           width:100%;
+           max-width: 900px;
            margin: auto;
            background: white;
-           padding: 25px;
+           padding: 30px;
            border-radius: 15px;
            margin-top: 40px;
            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .addHabitCard{
+          background:#f8fafc;
+          padding:20px;
+          margin-top:20px;
+          margin-bottom:25px;
+        }
+        .card{
+          background:white;
+          padding:20px;
+          border-radius:12px;
+          margin-top:20px;
         }
 
         /* HEADINGS */
@@ -79,23 +114,139 @@
             border-left: 5px solid #0ea5e9;
         }
 
+        .stats{
+           display:flex;
+           justify-content:space-between;
+           gap:20px;
+           margin:30px 0;
+        }
+
+        .statCard{
+           flex:1;
+           background:white;
+           padding:20px;
+           border-radius:12px;
+           box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .statCard h4{
+           color:#64748b;
+           margin-bottom:10px;
+        }
+
+        .statCard p{
+           font-size:28px;
+           font-weight:bold;
+           color:#2563eb;
+        }
+
+        #habitList{
+           list-style:none;
+           padding:0;
+        }
+
+        #habitList li{
+           background:white;
+           color:#1e293b;
+           padding:20px;
+           margin-bottom:20px;
+           border-radius:15px;
+           box-shadow:0 4px 12px rgba(0,0,0,0.08);
+           text-align:left;
+        }
+
+        #toast{
+           position:fixed;
+           top:20px;
+           right:20px;
+           background:#22c55e;
+           color:white;
+           padding:15px 25px;
+           border-radius:10px;
+           font-weight:bold;
+           opacity:0;
+           transition:0.4s;
+           pointer-events:none;
+           box-shadow:0 5px 15px rgba(0,0,0,0.2);
+        }
+
+
+        .habitButtons{
+           display:flex;
+           gap:10px;
+           margin-top:15px;
+        }
+
+        .doneBtn{
+           background:#22c55e;
+        }
+
+        .deleteBtn{
+           background:#ef4444;
+        }
+
     </style>
 </head>
 
 <body>
 
-<h1>Dashboard</h1>
-<p id = "status"></p>
+<div id="toast"></div>
 
-<h3>Add Habit</h3>
-<input id="habitName" placeholder="Enter habit">
-<button onclick="addHabit()">Add Habit</button>
+<div class="container">
 
-<h3>Your Habits</h3>
-<ul id="habitList"></ul>
-<button onclick="loadHabits()">Load Habits</button>
+    <div class="navbar">
 
-<button onclick="loadLeaderboard()">Show Leaderboard</button>
+        <div class="logo">
+            🏆 Habit Arena
+        </div>
+
+        <div class="navRight">
+
+            <span id="status"></span>
+
+            <button onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+    <h2>Dashboard</h2>
+
+    <div class="stats">
+
+        <div class="statCard">
+            <h4>Total Habits</h4>
+            <p id="totalHabits">0</p>
+        </div>
+
+        <div class="statCard">
+            <h4>Completed</h4>
+            <p id="completedHabits">0</p>
+        </div>
+
+        <div class="statCard">
+            <h4>Best Streak</h4>
+            <p id="bestStreak">0 🔥</p>
+        </div>
+
+    </div>
+
+
+    <div class="addHabitCard">
+      <h3>Add Habit</h3>
+      <input id="habitName" placeholder="Enter habit">
+      <button onclick="addHabit()">Add Habit</button>
+    </div>
+
+    <div class="card">
+      <h3>Your Habits</h3>
+      <ul id="habitList"></ul>
+    </div>
+
+
+<h3>🏆 Leaderboard</h3>
 <ul id="leaderboard"></ul>
 
 
@@ -106,9 +257,9 @@
     let statusEl = document.getElementById("status");
 
     if (token) {
-        statusEl.innerText = "Logged in ✅";
+        statusEl.innerText = "Welcome back! 👋";
     } else {
-        statusEl.innerText = "Not logged in ❌";
+        statusEl.innerText = "Please login.";
     }
 
     async function addHabit() {
@@ -126,10 +277,11 @@
         });
 
         if(res.ok){
-            alert("Habit added! ✅");
+            showToast("Habit added! ✅");
+            document.getElementById("habitName").value = "";
             loadHabits();
         } else {
-            alert("Error adding habit ❌");
+            showToast("Error adding habit ❌");
         }
     }
 
@@ -143,11 +295,21 @@
     });
 
     if (!res.ok) {
-        alert("Failed to load habits. Status: " + res.status);
+        showToast("Failed to load habits. Status: " + res.status);
         return;
     }
 
     let data = await res.json();
+    document.getElementById("totalHabits").innerText = data.length;
+
+    let completedCount = 0;
+    data.forEach(habit => {
+        if(habit.completed){
+          completedCount++;
+        }
+    });
+
+    document.getElementById("completedHabits").innerText = completedCount;
 
     let list = document.getElementById("habitList");
     list.innerHTML = "";
@@ -156,10 +318,23 @@
         let li = document.createElement("li");
 
         li.innerHTML = `
-            ${habit.title}
-            <button onclick="markDone(${habit.id})">✅ Done</button>
-            <span id="status-${habit.id}"></span>
-            <span id="streak-${habit.id}"> 🔥 0</span>
+             <h3>${habit.title}</h3>
+
+             <p id="streak-${habit.id}">🔥 Streak: 0</p>
+
+             <p id="status-${habit.id}"></p>
+
+             <div class="habitButtons">
+
+             <button class="doneBtn" onclick="markDone(${habit.id})">
+            ✅ Complete
+             </button>
+
+            <button class="deleteBtn" onclick="deleteHabit(${habit.id})">
+             Delete
+            </button>
+
+            </div>
         `;
 
         list.appendChild(li);
@@ -179,11 +354,41 @@
         });
 
         if(res.ok){
-            alert("Marked Done! 🔥");
+            showToast("Marked Done! 🔥");
             document.getElementById(`status-${habitId}`).innerText = " ✔ Done today";
         } else {
-            alert("Error marking habit ❌");
+            showToast("Error marking habit ❌");
         }
+    }
+
+    async function deleteHabit(habitId){
+
+       let token = localStorage.getItem("token");
+
+       let res = await fetch(`https://habit-arena-fwxv.onrender.com/Habit/${habitId}`,{
+
+           method:"DELETE",
+
+           headers:{
+            "Authorization":"Bearer " + token
+           }
+
+       });
+
+       if(res.ok){
+
+          showToast("Habit Deleted 🗑");
+
+          loadHabits();
+
+       }
+
+       else{
+
+         showToast("Failed to delete habit ❌");
+
+       }
+
     }
 
     async function loadStreak(habitId) {
@@ -199,7 +404,7 @@
 
         let el = document.getElementById(`streak-${habitId}`);
         if(el){
-            el.innerText = ` 🔥 ${streak}`;
+            el.innerText = ` 🔥 Streak: ${streak} days`;
         }
     }
 
@@ -230,7 +435,41 @@
         });
     }
 
+    function logout(){
+      localStorage.removeItem("token");
+      window.location.href = "index.html";
+    }
+
+
+
+    function showToast(message, success = true){
+
+        if(success){
+           toast.style.background = "#22c55e";
+        }
+        else{
+           toast.style.background = "#ef4444";
+        }
+
+        let toast = document.getElementById("toast");
+
+        toast.innerText = message;
+
+        toast.style.opacity = "1";
+
+        setTimeout(() => {
+
+           toast.style.opacity = "0";
+
+        },2000);
+
+    }
+
+    loadHabits();
+    loadLeaderboard();
+
 </script>
 
+</div>
 </body>
 </html>

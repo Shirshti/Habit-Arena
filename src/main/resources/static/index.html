@@ -20,7 +20,7 @@
             }
 
             .container{
-               max-width: 500px;
+               max-width: 900px;
                margin: auto;
                background: white;
                padding: 30px;
@@ -134,13 +134,6 @@
         <input id="loginPass" placeholder="password">
         <button onclick="login()">Login</button>
 
-        <br>
-
-        <button onclick="loadLeaderboard()">Show Leaderboard</button>
-
-        <h3>Leaderboard</h3>
-        <ul id="leaderboard"></ul>
-
 
     </div>
 
@@ -176,10 +169,11 @@
 
             token = await res.text();
             localStorage.setItem("token", token);
+            alert("Login successful!");
             window.location.href = "./dashboard.html";
 
             console.log(token);
-            alert("Login successful!");
+
         }
 
         async function loadLeaderboard() {
