@@ -444,15 +444,13 @@
 
     function showToast(message, success = true){
 
+        let toast = document.getElementById("toast");
         if(success){
            toast.style.background = "#22c55e";
         }
         else{
            toast.style.background = "#ef4444";
         }
-
-        let toast = document.getElementById("toast");
-
         toast.innerText = message;
 
         toast.style.opacity = "1";
