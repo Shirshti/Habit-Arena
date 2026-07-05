@@ -54,9 +54,8 @@ public class HabitLogService {
         }
     }
 
-    public int getStreak(Long habitId, String token){
+    public int getStreak(Long habitId, String username){
 
-        String username = jwtUtil.extractUsername(token.substring(7));
         User user = userRepo.findByUsername(username);
         Habit habit = repo.findById(habitId).orElseThrow();
 

@@ -29,7 +29,9 @@ import java.util.List;
 
     @DeleteMapping("/{id}")
     public boolean deleteHabit(@PathVariable Long id){
-      return habitService.deleteById(id);
+
+        System.out.println("DELETE endpoint reached. ID =" + id);
+        return habitService.deleteById(id);
     }
 
     @PutMapping("/{id}")
