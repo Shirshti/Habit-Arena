@@ -1,6 +1,8 @@
 package com.shrii.habitarena.Entity;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Habit {
@@ -9,6 +11,13 @@ public class Habit {
     private Long id;
     private String title;
     private String description;
+
+    @OneToMany(
+            mappedBy = "habit",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<HabitLog> habitLogs = new ArrayList<>();
 
     @ManyToOne   //joining habit and user by relation
     @JoinColumn(name = "user_id")
@@ -32,5 +41,10 @@ public class Habit {
     public String getDescription(){return description;}
     public void setDescription(String description){
         this.description = description;
+    }
+
+    public List<HabitLog> getHabitLogs(){ return  habitLogs;}
+    public void setHabitLogs(List<HabitLog> habitLogs) {
+        this.habitLogs = habitLogs;
     }
 }
