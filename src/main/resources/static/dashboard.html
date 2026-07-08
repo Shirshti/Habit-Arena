@@ -326,9 +326,10 @@
 
              <div class="habitButtons">
 
-             <button class="doneBtn" onclick="markDone(${habit.id})">
-            ✅ Complete
-             </button>
+             ${habit.completed
+               ? `<button class="doneBtn" disabled>✔ Done Today</button>`
+               : `<button class="doneBtn" onclick="markDone(${habit.id})">✅ Complete</button>`
+             }
 
             <button class="deleteBtn" onclick="deleteHabit(${habit.id})">
              Delete
@@ -355,7 +356,7 @@
 
         if(res.ok){
             showToast("Marked Done! 🔥");
-            document.getElementById(`status-${habitId}`).innerText = " ✔ Done today";
+            loadHabits();
         } else {
             showToast("Error marking habit ❌");
         }

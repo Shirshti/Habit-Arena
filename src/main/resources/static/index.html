@@ -1,201 +1,278 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="UTF-8">
     <title>Habit Arena</title>
-    <!DOCTYPE html>
 
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Habit Arena</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial;
+            background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+            margin: 0;
+            padding: 0;
+            color: #1e293b;
+        }
 
-        <style>
-            body{
-                font-family: 'Segoe UI', Arial;
-                background: linear-gradient(135deg, #e0f2fe, #f8fafc); /* light blue → white */
-                margin: 0;
-                padding: 0;
-                text-align: center;
-                color: #1e293b;
-            }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-            .container{
-               max-width: 900px;
-               margin: auto;
-               background: white;
-               padding: 30px;
-               border-radius: 15px;
-               margin-top: 50px;
-               box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            }
+        h1 {
+            font-size: 46px;
+            margin-bottom: 10px;
+        }
 
-            h1{
-                font-size: 40px;
-                margin-bottom: 10px;
-            }
+        .logoA {
+            display: inline-block;
+            font-size: 50px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #0ea5e9, #0020d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-            .logoA{
-               display: inline-block;
-               vertical-align: middle;
-               font-size: 45px;
-               font-weight: bold;
-               background: linear-gradient(45deg, #0ea5e9, #0020d8); /* 🔥 trending blue */
-               -webkit-background-clip: text;
-               -webkit-text-fill-color: transparent;
-               transition: 0.3s;
-            }
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 35px;
+        }
 
-            .logoA:hover{
-                transform: scale(1.2);
-            }
+        .forms {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
 
-            .subtitle{
-                font-size: 14px;
-                color: #64748b;
-                margin-bottom: 20px;
-            }
+        .formCard {
+            flex: 1;
+            min-width: 320px;
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
 
-            input{
-                padding: 10px;
-                width: 60%;
-                margin: 10px auto;
-                display: block;
-                border-radius: 6px;
-                border: 1px solid #cbd5f5;
-                background: #f8fafc;
-            }
+        .formCard h2 {
+            margin-bottom: 20px;
+            color: #2563eb;
+        }
 
-            input:focus{
-                outline: none;
-                border-color: #3b82f6;
-                box-shadow: 0 0 5px rgba(59,130,246,0.4);
-            }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 12px auto;
+            display: block;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 15px;
+        }
 
-            button{
-                padding: 10px 20px;
-                margin: 10px;
-                background: linear-gradient(45deg, #0ea5e9, #0020d8);
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                transition: 0.2s;
-            }
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 6px rgba(37,99,235,0.25);
+        }
 
-            button:hover{
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(59,130,246,0.3);
-            }
+        button {
+            margin-top: 15px;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(45deg,#0ea5e9,#0020d8);
+            color: white;
+            font-size: 15px;
+            transition: .25s;
+        }
 
-            ul{
-                list-style: none;
-                padding: 0;
-            }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37,99,235,.3);
+        }
 
-            li{
-                background: #0f172a;
-                color: white;
-                margin: 10px;
-                padding: 12px;
-                border-radius: 10px;
-                font-size: 16px;
-                border-left: 5px solid #0ea5e9;
-                transition: 0.2s;
-            }
+        footer {
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 14px;
+        }
 
-            li:hover{
-                transform: scale(1.02);
-                background: #dbeafe;
-            }
-        </style>
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            opacity: 0;
+            transition: .4s;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,.2);
+        }
+    </style>
+</head>
 
+<body>
 
-    </head>
+<div id="toast"></div>
 
-    <body>
+<div class="container">
 
+    <h1>
+        Habit<span class="logoA">A</span>rena
+    </h1>
 
-    <div class="container">
+    <p class="subtitle">
+        Build Better Habits Every Day.<br>
+        Stay consistent, build streaks and climb the leaderboard.
+    </p>
 
+    <div class="forms">
 
-        <h1>
-            Habit<span class="logoA">A</span>rena
-        </h1>
+        <div class="formCard">
 
-        <p class="subtitle">Track your habits. Build consistency.</p>
+            <h2>Create Account</h2>
 
-        <h3>Register</h3>
-        <input id="regUser" placeholder="username">
-        <input id="regPass" placeholder="password">
-        <button onclick="register()">Register</button>
+            <input id="regUser" placeholder="Username">
 
-        <h3>Login</h3>
-        <input id="loginUser" placeholder="username">
-        <input id="loginPass" placeholder="password">
-        <button onclick="login()">Login</button>
+            <input id="regPass" type="password" placeholder="Password">
 
+            <button onclick="register()">
+                Register
+            </button>
+
+        </div>
+
+        <div class="formCard">
+
+            <h2>Welcome Back</h2>
+
+            <input id="loginUser" placeholder="Username">
+
+            <input id="loginPass" type="password" placeholder="Password">
+
+            <button onclick="login()">
+                Login
+            </button>
+
+        </div>
 
     </div>
 
-    <script>
-        let token = "";
+    <footer>
+        Made with ❤️ using Spring Boot, Java & MySQL
+    </footer>
 
-        async function register() {
-            let username = document.getElementById("regUser").value;
-            let password = document.getElementById("regPass").value;
+</div>
 
-            await fetch("https://habit-arena-fwxv.onrender.com/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({username, password})
-            });
+<script>
 
-            alert("Registered successfully!");
+    let token = "";
+
+    async function register() {
+
+        let username = document.getElementById("regUser").value;
+        let password = document.getElementById("regPass").value;
+
+        let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/register", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                username,
+                password
+            })
+
+        });
+
+        if(res.ok){
+            showToast("Registered Successfully! 🎉");
+        }
+        else{
+            showToast("Registration Failed ❌", false);
         }
 
-        async function login() {
-            let username = document.getElementById("loginUser").value;
-            let password = document.getElementById("loginPass").value;
+    }
 
-            let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({username, password})
-            });
+    async function login() {
 
-            token = await res.text();
-            localStorage.setItem("token", token);
-            alert("Login successful!");
+        let username = document.getElementById("loginUser").value;
+        let password = document.getElementById("loginPass").value;
+
+        let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/login", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                username,
+                password
+            })
+
+        });
+
+        if(!res.ok){
+            showToast("Invalid Username or Password ❌", false);
+            return;
+        }
+
+        token = await res.text();
+
+        localStorage.setItem("token", token);
+
+        showToast("Login Successful! 🎉");
+
+        setTimeout(() => {
+
             window.location.href = "./dashboard.html";
 
-            console.log(token);
+        }, 800);
 
+    }
+
+    function showToast(message, success = true){
+
+        let toast = document.getElementById("toast");
+
+        if(success){
+            toast.style.background = "#22c55e";
+        }
+        else{
+            toast.style.background = "#ef4444";
         }
 
-        async function loadLeaderboard() {
-            let res = await fetch("https://habit-arena-fwxv.onrender.com/auth/leaderboard", {
-                method: "GET",
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            });
+        toast.innerText = message;
 
-            let data = await res.json();
+        toast.style.opacity = "1";
 
-            let list = document.getElementById("leaderboard");
-            list.innerHTML = "";
+        setTimeout(() => {
 
-            data.forEach((user, index) => {
-                let li = document.createElement("li");
-                li.innerHTML = `#${index+1} <strong>${user.username}</strong> 🔥 ${user.streak}`;
-                list.appendChild(li);
-            });
-        }
-    </script>
+            toast.style.opacity = "0";
 
-    </body>
-    </html>
+        },2000);
+
+    }
+
+</script>
+
+</body>
+
+</html>
