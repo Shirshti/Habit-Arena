@@ -92,6 +92,13 @@ public class HabitService {
             res.setTitle(habit.getTitle());
             res.setDescription(habit.getDescription());
             res.setUsername(user.getUsername());
+            HabitLog log = habitLogRepo.findByHabitAndUserAndDate(
+                    habit,
+                    user,
+                    LocalDate.now()
+            );
+
+            res.setCompleted(log != null && log.isCompleted());
 
             responseList.add(res);
         }
